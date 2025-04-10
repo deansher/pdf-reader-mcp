@@ -147,6 +147,7 @@ Claude Code is a CLI tool that also supports MCP servers.
 
 2. **Add the PDF Reader MCP Server**:
    ```bash
+   # Add to the current project (default scope)
    claude mcp add pdf-reader pdf-reader-mcp
    ```
 
@@ -168,6 +169,80 @@ Claude Code is a CLI tool that also supports MCP servers.
    Then, in the Claude Code session, you can ask about PDFs:
    ```
    > read the content from /path/to/document.pdf
+   ```
+
+#### Understanding MCP Server Scopes in Claude Code
+
+Claude Code supports different scopes for MCP server configurations, giving you flexibility in how you manage servers across projects and teams.
+
+1. **Available Scopes**:
+
+   - **Local scope** (default): Stored in your project-specific user settings
+   - **User scope**: Available across all your projects
+   - **Project scope**: Shared with your team via a `.mcp.json` file
+
+2. **Using Different Scopes**:
+
+   ```bash
+   # Add to local scope (default)
+   claude mcp add pdf-reader pdf-reader-mcp
+   
+   # Add to user scope (available across all your projects)
+   claude mcp add -s user pdf-reader pdf-reader-mcp
+   
+   # Add to project scope (shared with team via .mcp.json)
+   claude mcp add -s project pdf-reader pdf-reader-mcp
+   ```
+
+3. **Pros and Cons of Different Scopes**:
+
+   **User Scope (`-s user`):**
+   - ✅ **Pros**:
+     - Available in all your projects without re-adding
+     - Persists even when switching between different codebases
+     - No need to configure for each new project
+     - Keeps your personal configuration preferences private
+   
+   - ❌ **Cons**:
+     - Not shared with team members automatically
+     - May cause confusion when collaborating if teammates don't have the same setup
+     - Configuration stays in your user settings, not with the project
+
+   **Project Scope (`-s project`):**
+   - ✅ **Pros**:
+     - Automatically shared with team members via version control
+     - Configuration travels with the project
+     - Ensures consistent MCP server setup across team
+     - New team members automatically get the same configuration
+   
+   - ❌ **Cons**:
+     - Requires committing `.mcp.json` to version control
+     - May include paths that don't work across different environments
+     - All team members need to approve the server when first used
+
+   **Local Scope (default):**
+   - ✅ **Pros**:
+     - Simple project-specific configuration
+     - Doesn't affect other projects
+     - Private to your user settings for the specific project
+   
+   - ❌ **Cons**:
+     - Need to reconfigure for each project
+     - Not shared with team automatically
+     - Configuration doesn't persist across different machines
+
+4. **Recommended Approach**:
+   - Use **user scope** for personal tools you want available everywhere
+   - Use **project scope** for team-shared tools that should be available to everyone working on the project
+   - Use **local scope** for project-specific configurations you don't want to share
+
+5. **Managing Scope-specific Configurations**:
+   ```bash
+   # List servers in a specific scope
+   claude mcp list -s user
+   
+   # Remove server from a specific scope
+   claude mcp remove -s user pdf-reader
    ```
 
 ### Troubleshooting Claude Integration
