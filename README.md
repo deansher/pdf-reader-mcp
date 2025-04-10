@@ -65,11 +65,15 @@ Alternatively, you can build from source:
    node dist/index.js
    ```
 
-## 🌐 Setting Up with Claude Desktop
+## 🌐 Setting Up with Claude Clients
 
-Claude Desktop is the recommended way to use this MCP server. 
+This MCP server can be used with different Claude clients. Follow the instructions below for your preferred platform.
 
-### Detailed Setup Instructions
+### Setting Up with Claude Desktop
+
+Claude Desktop is a standalone application that supports MCP servers on Windows and macOS.
+
+#### Detailed Setup Instructions
 
 1. **Install Claude Desktop** 
    - Download from [claude.ai/download](https://claude.ai/download) if you haven't already
@@ -100,7 +104,7 @@ Claude Desktop is the recommended way to use this MCP server.
    }
    ```
 
-   If you have other MCP servers already configured, add this as an additional entry.
+   If you have other MCP servers already configured, add this as an additional entry in the `mcpServers` object.
 
 5. **Specify Directories (Optional but Recommended)**
    If you want to limit PDF access to specific directories, use the following format:
@@ -130,9 +134,45 @@ Claude Desktop is the recommended way to use this MCP server.
    - After restart, you should see a hammer icon (🔨) in the input box
    - Click it to see available tools, which should include the PDF reader tool
 
-### Troubleshooting Claude Desktop Integration
+### Setting Up with Claude Code (CLI)
 
-If the PDF Reader MCP doesn't appear in Claude Desktop:
+Claude Code is a CLI tool that also supports MCP servers.
+
+#### Detailed Setup Instructions
+
+1. **Install Claude Code** if you haven't already:
+   ```bash
+   npm install -g @anthropic-ai/claude-code
+   ```
+
+2. **Add the PDF Reader MCP Server**:
+   ```bash
+   claude mcp add pdf-reader pdf-reader-mcp
+   ```
+
+3. **Add with Directory Restrictions (Optional)**: 
+   ```bash
+   claude mcp add pdf-reader pdf-reader-mcp --allowed-dirs /path/to/pdf/directory1 /path/to/pdf/directory2
+   ```
+
+4. **Verify Installation**:
+   ```bash
+   claude mcp list
+   ```
+
+5. **Use the PDF Reader in Claude Code**:
+   ```bash
+   claude
+   ```
+   
+   Then, in the Claude Code session, you can ask about PDFs:
+   ```
+   > read the content from /path/to/document.pdf
+   ```
+
+### Troubleshooting Claude Integration
+
+If the PDF Reader MCP doesn't appear in Claude:
 
 1. **Check Configuration Syntax**
    - Ensure your JSON is valid with proper syntax
@@ -147,16 +187,17 @@ If the PDF Reader MCP doesn't appear in Claude Desktop:
    - If not found, try reinstalling with `npm install -g @sylphlab/pdf-reader-mcp`
 
 4. **Check Claude Logs**
-   - Look for error messages in Claude's log files:
+   - For Claude Desktop, look for error messages in Claude's log files:
      - **macOS**: `~/Library/Logs/Claude/mcp*.log`
      - **Windows**: `%APPDATA%\Claude\logs\mcp*.log`
+   - For Claude Code, run with verbose output: `claude --verbose`
    
 5. **Test Manual Execution**
    - Try running `pdf-reader-mcp` directly in your terminal to see if it works
 
 ## 🌐 Using with Claude.ai Web
 
-Currently, Claude.ai web interface doesn't support MCP servers directly. This functionality is only available in the desktop applications.
+Currently, Claude.ai web interface doesn't support MCP servers directly. This functionality is only available in the desktop applications and Claude Code CLI.
 
 ## 🌐 Using with Other MCP Clients
 
