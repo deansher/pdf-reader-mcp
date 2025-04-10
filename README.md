@@ -16,13 +16,21 @@ Welcome to the **PDF Reader MCP** repository! This is an [MCP (Model Context Pro
 
 ## 🔧 Installation
 
-### Option 1: Install from NPM
+### Prerequisites
 
-The easiest way to get started is to install the package from NPM:
+- **Node.js**: Make sure you have Node.js installed (version 22.0.0 or higher as specified in package.json)
+  - Verify your installation by running `node --version` in your terminal
+  - If not installed, download from [nodejs.org](https://nodejs.org/)
+
+### Option 1: Install from NPM (Recommended)
+
+The easiest way to get started is to install the package globally from NPM:
 
 ```bash
 npm install -g @sylphlab/pdf-reader-mcp
 ```
+
+After installation, the `pdf-reader-mcp` command will be available in your terminal.
 
 ### Option 2: Build from Source
 
@@ -52,27 +60,111 @@ Alternatively, you can build from source:
    pnpm run build
    ```
 
-## 🌐 Usage with MCP Clients
-
-This is an MCP (Model Context Protocol) server that communicates via stdio transport, not an HTTP server. It's designed to be used with MCP-compatible clients like Claude Desktop.
-
-### Using with Claude Desktop
-
-1. Install Claude Desktop if you haven't already
-2. Open Claude Desktop settings and navigate to the MCP section
-3. Add a new MCP server with the following command:
+5. Run the server:
    ```bash
-   pdf-reader-mcp
+   node dist/index.js
    ```
-4. Save and start using the PDF reader capabilities directly in Claude!
 
-### Using with Other MCP Clients
+## 🌐 Setting Up with Claude Desktop
+
+Claude Desktop is the recommended way to use this MCP server. 
+
+### Detailed Setup Instructions
+
+1. **Install Claude Desktop** 
+   - Download from [claude.ai/download](https://claude.ai/download) if you haven't already
+   - Available for Windows and macOS (Linux not currently supported)
+
+2. **Access Claude's Configuration**
+   - Open Claude Desktop
+   - Click on the Claude menu in your system menu bar or taskbar (not in the app window)
+   - Select "Settings..."
+   - Click on "Developer" in the left sidebar
+   - Click "Edit Config"
+
+3. **Edit Configuration File**
+   This will open the configuration file located at:
+   - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+4. **Add PDF Reader MCP Configuration**
+   Add or modify the configuration to include the PDF Reader MCP:
+
+   ```json
+   {
+     "mcpServers": {
+       "pdf-reader": {
+         "command": "pdf-reader-mcp"
+       }
+     }
+   }
+   ```
+
+   If you have other MCP servers already configured, add this as an additional entry.
+
+5. **Specify Directories (Optional but Recommended)**
+   If you want to limit PDF access to specific directories, use the following format:
+
+   ```json
+   {
+     "mcpServers": {
+       "pdf-reader": {
+         "command": "pdf-reader-mcp",
+         "args": [
+           "--allowed-dirs",
+           "/path/to/pdf/directory1",
+           "/path/to/pdf/directory2"
+         ]
+       }
+     }
+   }
+   ```
+
+   Replace the paths with actual directories where your PDFs are stored.
+
+6. **Restart Claude Desktop**
+   - Close Claude Desktop completely
+   - Restart the application
+
+7. **Verify Installation**
+   - After restart, you should see a hammer icon (🔨) in the input box
+   - Click it to see available tools, which should include the PDF reader tool
+
+### Troubleshooting Claude Desktop Integration
+
+If the PDF Reader MCP doesn't appear in Claude Desktop:
+
+1. **Check Configuration Syntax**
+   - Ensure your JSON is valid with proper syntax
+   - All keys and strings should be enclosed in double quotes
+
+2. **Verify Node Installation**
+   - Run `node --version` to verify Node.js is installed and in your PATH
+   - Make sure your Node version is 22.0.0 or higher
+
+3. **Check MCP Installation**
+   - Verify the package was installed globally by running `pdf-reader-mcp --version`
+   - If not found, try reinstalling with `npm install -g @sylphlab/pdf-reader-mcp`
+
+4. **Check Claude Logs**
+   - Look for error messages in Claude's log files:
+     - **macOS**: `~/Library/Logs/Claude/mcp*.log`
+     - **Windows**: `%APPDATA%\Claude\logs\mcp*.log`
+   
+5. **Test Manual Execution**
+   - Try running `pdf-reader-mcp` directly in your terminal to see if it works
+
+## 🌐 Using with Claude.ai Web
+
+Currently, Claude.ai web interface doesn't support MCP servers directly. This functionality is only available in the desktop applications.
+
+## 🌐 Using with Other MCP Clients
 
 For other MCP clients, refer to your client's documentation on how to connect MCP servers. The server uses stdio transport and follows the MCP specification.
 
-### Standalone Testing
+## 🧪 Standalone Testing
 
-You can test the server using the MCP Inspector tool:
+You can test the server locally using the MCP Inspector tool:
 
 ```bash
 npm run inspector
@@ -148,6 +240,11 @@ Reads content and metadata from one or more PDFs (local or from URL).
 ## 🛡️ Security
 
 The server includes path validation to prevent directory traversal attacks. However, you should be careful about which directories you run the server from, as it can access files relative to its working directory.
+
+For enhanced security:
+1. Use the `--allowed-dirs` argument to explicitly specify which directories can be accessed
+2. Run the server with minimal permissions needed
+3. Be cautious about allowing access to sensitive documents
 
 ## 📊 Contribution
 
