@@ -21,9 +21,9 @@ import { allToolDefinitions } from './handlers/index.js';
 
 const server = new Server(
   {
-    name: 'filesystem-mcp',
+    name: 'pdf-reader-mcp',
     version: '0.4.0', // Increment version for definition refactor
-    description: 'MCP Server for filesystem operations relative to the project root.',
+    description: 'MCP Server for reading and parsing PDF files.',
   },
   {
     capabilities: { tools: {} },
@@ -34,7 +34,8 @@ const server = new Server(
 // Use 'unknown' instead of 'any' for better type safety, although casting is still needed for the SDK
 const generateInputSchema = (schema: z.ZodType<unknown>): object => {
   // Need to cast as 'unknown' then 'object' because zodToJsonSchema might return slightly incompatible types for MCP SDK
-  return zodToJsonSchema(schema, { target: 'openApi3' }) as unknown as object;
+  // Use default jsonSchema7 format which is more compatible with JSON Schema draft 2020-12 than OpenAPI 3.0
+  return zodToJsonSchema(schema) as unknown as object;
 };
 
 server.setRequestHandler(ListToolsRequestSchema, () => {
@@ -68,11 +69,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main(): Promise<void> {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('[Filesystem MCP] Server running on stdio');
+  console.error('[PDF Reader MCP] Server running on stdio');
 }
 
 main().catch((error: unknown) => {
   // Specify 'unknown' type for catch variable
-  console.error('[Filesystem MCP] Server error:', error);
+  console.error('[PDF Reader MCP] Server error:', error);
   process.exit(1);
 });
