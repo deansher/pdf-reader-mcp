@@ -1,9 +1,10 @@
 node_modules/
 build/
-build/
+dist/
 *.log
 coverage/
 .env*
+.eslintcache
 
 # VitePress
 docs/.vitepress/dist
@@ -11,3 +12,4 @@ docs/.vitepress/cache
 
 # Test Reports
 test-report.junit.xml
+
